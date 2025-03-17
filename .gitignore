@@ -1,0 +1,9 @@
+__pycache__
+*.pt
+*.png
+events.*
+outputs
+src/data/aotgan
+.idea
+examples/logos/image
+docs

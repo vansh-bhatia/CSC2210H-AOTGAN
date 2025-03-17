@@ -1,0 +1,15 @@
+# requirements.txt
+
+Markdown
+attrdict
+networkx
+numpy
+opencv-python
+setuptools
+six
+sympy
+tensorboard
+tensorboard-data-server
+torch
+torchvision
+tqdm
