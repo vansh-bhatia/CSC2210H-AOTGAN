@@ -4,7 +4,7 @@ from glob import glob
 
 import torch
 from data import create_loader
-
+import torch.nn.functional as F
 
 from loss import loss as loss_module
 from torch.nn.parallel import DistributedDataParallel as DDP
@@ -77,11 +77,13 @@ class Trainer:
     ):
         if self.args.global_rank == 0:
             print(f"\nsaving {self.iteration} model to {self.args.save_dir} ...")
+            netG_state = self.netG.module.state_dict() if hasattr(self.netG, 'module') else self.netG.state_dict()
+            netD_state = self.netD.module.state_dict() if hasattr(self.netD, 'module') else self.netD.state_dict()
             torch.save(
-                self.netG.module.state_dict(), os.path.join(self.args.save_dir, f"G{str(self.iteration).zfill(7)}.pt")
+                netG_state, os.path.join(self.args.save_dir, f"G{str(self.iteration).zfill(7)}.pt")
             )
             torch.save(
-                self.netD.module.state_dict(), os.path.join(self.args.save_dir, f"D{str(self.iteration).zfill(7)}.pt")
+                netD_state, os.path.join(self.args.save_dir, f"D{str(self.iteration).zfill(7)}.pt")
             )
             torch.save(
                 {"optimG": self.optimG.state_dict(), "optimD": self.optimD.state_dict()},
@@ -98,6 +100,11 @@ class Trainer:
             self.iteration += 1
             images, masks, filename = next(self.dataloader)
             images, masks = images.cuda(), masks.cuda()
+
+            # resize to. match
+            if images.shape[2:] != masks.shape[2:]:
+                masks = F.interpolate(masks, size=images.shape[2:], mode='nearest')
+
             images_masked = (images * (1 - masks).float()) + masks
 
             if self.args.global_rank == 0:
@@ -139,12 +146,13 @@ class Trainer:
                     description += f"{key}:{val.item():.3f}, "
                     if self.args.tensorboard:
                         self.writer.add_scalar(key, val.item(), self.iteration)
-                pbar.set_description((description))
+                pbar.set_description(description)
                 if self.args.tensorboard:
                     self.writer.add_image("mask", make_grid(masks), self.iteration)
                     self.writer.add_image("orig", make_grid((images + 1.0) / 2.0), self.iteration)
                     self.writer.add_image("pred", make_grid((pred_img + 1.0) / 2.0), self.iteration)
                     self.writer.add_image("comp", make_grid((comp_img + 1.0) / 2.0), self.iteration)
-
+            # todo: Vansh remove -> to run
+            # self.args.save_every = 10
             if self.args.global_rank == 0 and (self.iteration % self.args.save_every) == 0:
                 self.save()
