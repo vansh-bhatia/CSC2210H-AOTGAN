@@ -4,10 +4,10 @@ import argparse
 parser = argparse.ArgumentParser(description="Image Inpainting")
 
 # data specifications
-parser.add_argument("--dir_image", type=str, default="../../dataset", help="image dataset directory")
-parser.add_argument("--dir_mask", type=str, default="../../dataset", help="mask dataset directory")
-parser.add_argument("--data_train", type=str, default="places2", help="dataname used for training")
-parser.add_argument("--data_test", type=str, default="places2", help="dataname used for testing")
+parser.add_argument("--dir_image", type=str, default="data/aotgan/images", help="image dataset directory")
+parser.add_argument("--dir_mask", type=str, default="data/aotgan/images", help="mask dataset directory")
+parser.add_argument("--data_train", type=str, default="train", help="dataname used for training")
+parser.add_argument("--data_test", type=str, default="test", help="dataname used for testing")
 parser.add_argument("--image_size", type=int, default=512, help="image size used during training")
 parser.add_argument("--mask_type", type=str, default="pconv", help="mask used during training")
 
@@ -35,16 +35,16 @@ parser.add_argument("--rec_loss", type=str, default="1*L1+250*Style+0.1*Perceptu
 parser.add_argument("--adv_weight", type=float, default=0.01, help="loss weight for adversarial loss")
 
 # training specifications
-parser.add_argument("--iterations", type=int, default=1e6, help="the number of iterations for training")
+parser.add_argument("--iterations", type=int, default=1e4, help="the number of iterations for training")
 parser.add_argument("--batch_size", type=int, default=8, help="batch size in each mini-batch")
 parser.add_argument("--port", type=int, default=22334, help="tcp port for distributed training")
 parser.add_argument("--resume", action="store_true", help="resume from previous iteration")
 
 
 # log specifications
-parser.add_argument("--print_every", type=int, default=10, help="frequency for updating progress bar")
-parser.add_argument("--save_every", type=int, default=1e4, help="frequency for saving models")
-parser.add_argument("--save_dir", type=str, default="../experiments", help="directory for saving models and logs")
+parser.add_argument("--print_every", type=int, default=1, help="frequency for updating progress bar")
+parser.add_argument("--save_every", type=int, default=100, help="frequency for saving models")
+parser.add_argument("--save_dir", type=str, default="data", help="directory for saving models and logs")
 parser.add_argument(
     "--tensorboard", action="store_true", help="default: false, since it will slow training. use it for debugging"
 )

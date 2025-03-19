@@ -5,4 +5,4 @@
 #SBATCH --partition=gpunodes     # Partition to run the job (use appropriate partition for your cluster)
 #SBATCH --gres=gpu:1             # Request one GPU (adjust as needed)
 #SBATCH --nodelist=gpunode3
-python3 -u train.py --iterations=10000 --dir_image="data/aotgan/JPEGImages" --dir_mask="data/aotgan/masks" --batch_size=4 --save_dir="data"
+python3 -u train.py  

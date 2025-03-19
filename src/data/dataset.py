@@ -16,7 +16,7 @@ class InpaintingData(Dataset):
         # image and mask
         self.image_path = []
         for ext in ["*.jpg", "*.png"]:
-            self.image_path.extend(glob(os.path.join(args.dir_image, ext)))
+            self.image_path.extend(glob(os.path.join(args.dir_image,args.data_train, ext)))
         self.mask_path = glob(os.path.join(args.dir_mask, "*.png"))
         # print("mask path", self.mask_path)
         # augmentation
@@ -64,8 +64,8 @@ if __name__ == "__main__":
     from attrdict import AttrDict
 
     args = {
-        "dir_image": "aotgan/JPEGImages",
-        "data_train": "places2",
+        "dir_image": "aotgan/images",
+        "data_train": "train",
         "dir_mask": "aotgan/masks",
         "mask_type": "pconv",
         "image_size": 512,
