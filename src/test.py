@@ -5,8 +5,9 @@ from glob import glob
 import numpy as np
 import torch
 from PIL import Image
-from torchvision.transforms import ToTensor
+from torchvision.transforms import ToTensor,Resize
 from utils.option import args
+from tqdm import tqdm
 
 
 def postprocess(image):
@@ -35,11 +36,12 @@ def main_worker(args, use_gpu=True):
     os.makedirs(args.outputs, exist_ok=True)
 
     # iteration through datasets
-    for ipath, mpath in zip(image_paths, mask_paths):
-        image = ToTensor()(Image.open(ipath).convert("RGB"))
+    for ipath, mpath in tqdm(zip(image_paths, mask_paths)):
+        image = ToTensor()(Image.open(ipath).resize((args.image_size,args.image_size)).convert("RGB"))
         image = (image * 2.0 - 1.0).unsqueeze(0)
-        mask = ToTensor()(Image.open(mpath).convert("L"))
+        mask = ToTensor()(Image.open(mpath).resize((args.image_size,args.image_size)).convert("L"))
         mask = mask.unsqueeze(0)
+        # image = Resize(args.image_size, interpolation=transforms.InterpolationMode.NEAREST)(image)
         image, mask = image.cuda(), mask.cuda()
         image_masked = image * (1 - mask.float()) + mask
 
@@ -51,7 +53,7 @@ def main_worker(args, use_gpu=True):
         postprocess(image_masked[0]).save(os.path.join(args.outputs, f"{image_name}_masked.png"))
         postprocess(pred_img[0]).save(os.path.join(args.outputs, f"{image_name}_pred.png"))
         postprocess(comp_imgs[0]).save(os.path.join(args.outputs, f"{image_name}_comp.png"))
-        print(f"saving to {os.path.join(args.outputs, image_name)}")
+        # print(f"saving to {os.path.join(args.outputs, image_name)}")
 
 
 if __name__ == "__main__":

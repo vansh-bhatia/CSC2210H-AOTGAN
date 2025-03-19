@@ -13,3 +13,5 @@ tensorboard-data-server
 torch
 torchvision
 tqdm
+scipy
+scikit-image

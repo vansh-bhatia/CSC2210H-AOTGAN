@@ -29,7 +29,7 @@ def compare_psnr(pairs):
 
 def compare_ssim(pairs):
     real, fake = pairs
-    return structural_similarity(real, fake, multichannel=True)
+    return structural_similarity(real, fake, channel_axis=-1)
 
 
 # ================================

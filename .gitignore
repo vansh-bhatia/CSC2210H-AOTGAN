@@ -7,3 +7,4 @@ src/data/aotgan
 .idea
 examples/logos/image
 docs
+.venv

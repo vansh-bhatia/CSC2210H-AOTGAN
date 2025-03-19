@@ -36,14 +36,14 @@ parser.add_argument("--adv_weight", type=float, default=0.01, help="loss weight 
 
 # training specifications
 parser.add_argument("--iterations", type=int, default=1e4, help="the number of iterations for training")
-parser.add_argument("--batch_size", type=int, default=8, help="batch size in each mini-batch")
+parser.add_argument("--batch_size", type=int, default=4, help="batch size in each mini-batch")
 parser.add_argument("--port", type=int, default=22334, help="tcp port for distributed training")
 parser.add_argument("--resume", action="store_true", help="resume from previous iteration")
 
 
 # log specifications
-parser.add_argument("--print_every", type=int, default=1, help="frequency for updating progress bar")
-parser.add_argument("--save_every", type=int, default=100, help="frequency for saving models")
+parser.add_argument("--print_every", type=int, default=10, help="frequency for updating progress bar")
+parser.add_argument("--save_every", type=int, default=1000, help="frequency for saving models")
 parser.add_argument("--save_dir", type=str, default="data", help="directory for saving models and logs")
 parser.add_argument(
     "--tensorboard", action="store_true", help="default: false, since it will slow training. use it for debugging"
@@ -51,7 +51,7 @@ parser.add_argument(
 
 # test and demo specifications
 parser.add_argument("--pre_train", type=str, default=None, help="path to pretrained models")
-parser.add_argument("--outputs", type=str, default="../outputs", help="path to save results")
+parser.add_argument("--outputs", type=str, default="data/outputs", help="path to save results")
 parser.add_argument("--thick", type=int, default=15, help="the thick of pen for free-form drawing")
 parser.add_argument("--painter", default="freeform", choices=("freeform", "bbox"), help="different painters for demo ")
 
