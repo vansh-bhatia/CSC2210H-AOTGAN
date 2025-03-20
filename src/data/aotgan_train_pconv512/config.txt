@@ -1,0 +1,35 @@
+dir_image: data/aotgan/images
+dir_mask: data/aotgan/masks
+data_train: train
+data_test: test
+image_size: 512
+mask_type: pconv
+model: aotgan
+block_num: 8
+rates: [1, 2, 4, 8]
+gan_type: smgan
+seed: 2021
+num_workers: 4
+lrg: 0.0001
+lrd: 0.0001
+optimizer: ADAM
+beta1: 0.5
+beta2: 0.999
+rec_loss: {'L1': 1.0, 'Style': 250.0, 'Perceptual': 0.1}
+adv_weight: 0.01
+iterations: 10000
+batch_size: 4
+port: 22334
+resume: False
+print_every: 10
+save_every: 1000
+save_dir: data/aotgan_train_pconv512
+tensorboard: False
+pre_train: None
+outputs: data/outputs
+thick: 15
+painter: freeform
+world_size: 1
+distributed: False
+local_rank: 0
+global_rank: 0

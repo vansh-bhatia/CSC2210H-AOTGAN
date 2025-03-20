@@ -73,29 +73,34 @@ class Trainer:
             pass
 
     def save(
-        self,
+        self, best=False,
     ):
         if self.args.global_rank == 0:
             print(f"\nsaving {self.iteration} model to {self.args.save_dir} ...")
             netG_state = self.netG.module.state_dict() if hasattr(self.netG, 'module') else self.netG.state_dict()
             netD_state = self.netD.module.state_dict() if hasattr(self.netD, 'module') else self.netD.state_dict()
-            torch.save(
-                netG_state, os.path.join(self.args.save_dir, f"G{str(self.iteration).zfill(7)}.pt")
-            )
-            torch.save(
-                netD_state, os.path.join(self.args.save_dir, f"D{str(self.iteration).zfill(7)}.pt")
-            )
-            torch.save(
-                {"optimG": self.optimG.state_dict(), "optimD": self.optimD.state_dict()},
-                os.path.join(self.args.save_dir, f"O{str(self.iteration).zfill(7)}.pt"),
-            )
+            if best:
+                torch.save(
+                    netG_state, os.path.join(self.args.save_dir, f"G_best.pt")
+                )
+            else:    
+                torch.save(
+                    netG_state, os.path.join(self.args.save_dir, f"G{str(self.iteration).zfill(7)}.pt")
+                )
+                torch.save(
+                    netD_state, os.path.join(self.args.save_dir, f"D{str(self.iteration).zfill(7)}.pt")
+                )
+                torch.save(
+                    {"optimG": self.optimG.state_dict(), "optimD": self.optimD.state_dict()},
+                    os.path.join(self.args.save_dir, f"O{str(self.iteration).zfill(7)}.pt"),
+                )
 
     def train(self):
         pbar = range(self.iteration, self.args.iterations)
         if self.args.global_rank == 0:
             pbar = tqdm(range(self.args.iterations), initial=self.iteration, dynamic_ncols=True, smoothing=0.01)
             timer_data, timer_model = timer(), timer()
-
+        min_loss = 1000000
         for idx in pbar:
             self.iteration += 1
             images, masks, filename = next(self.dataloader)
@@ -117,12 +122,22 @@ class Trainer:
 
             # reconstruction losses
             losses = {}
+            total_loss = 100000
             for name, weight in self.args.rec_loss.items():
-                losses[name] = weight * self.rec_loss_func[name](pred_img, images)
+                value = weight * self.rec_loss_func[name](pred_img, images)
+                losses[name] = value
+                total_loss += value
 
             # adversarial loss
             dis_loss, gen_loss = self.adv_loss(self.netD, comp_img, images, masks)
-            losses["advg"] = gen_loss * self.args.adv_weight
+            value = gen_loss * self.args.adv_weight
+            losses["advg"] = value
+            total_loss += value
+            
+            if total_loss < min_loss:
+                min_loss = total_loss
+                total_loss = 0
+                self.save(best=True)
 
             # backforward
             self.optimG.zero_grad()
