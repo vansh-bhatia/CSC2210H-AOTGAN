@@ -8,3 +8,9 @@ src/data/aotgan
 examples/logos/image
 docs
 .venv
+src/error.txt
+src/output.txt
+src/data/aotgan_train_pconv512/config.txt
+venv
+src/output.txt
+output.txt
