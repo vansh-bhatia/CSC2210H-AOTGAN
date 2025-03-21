@@ -11,7 +11,7 @@ from tqdm import tqdm
 parser = argparse.ArgumentParser(description="Image Inpainting")
 parser.add_argument("--real_dir", default="data/aotgan/images/test", type=str)
 parser.add_argument("--fake_dir", default="data/outputs", type=str)
-parser.add_argument("--metric", type=str, nargs="+")
+parser.add_argument("--metric", type=str, nargs="+", default="mae psnr ssim")
 parser.add_argument("--image_size", type=int, default=512, help="image size used during training")
 args = parser.parse_args()
 

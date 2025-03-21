@@ -122,7 +122,7 @@ class Trainer:
 
             # reconstruction losses
             losses = {}
-            total_loss = 100000
+            total_loss = 0
             for name, weight in self.args.rec_loss.items():
                 value = weight * self.rec_loss_func[name](pred_img, images)
                 losses[name] = value
