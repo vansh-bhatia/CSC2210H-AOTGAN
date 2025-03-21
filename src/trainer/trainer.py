@@ -29,6 +29,7 @@ class Trainer:
 
         # Image generator input: [rgb(3) + mask(1)], discriminator input: [rgb(3)]
         net = importlib.import_module("model." + args.model)
+        os.makedirs(self.args.save_dir, exist_ok=True)
 
         self.netG = net.InpaintGenerator(args).cuda()
         self.optimG = torch.optim.Adam(self.netG.parameters(), lr=args.lrg, betas=(args.beta1, args.beta2))
