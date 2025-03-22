@@ -11,8 +11,8 @@ from tqdm import tqdm
 parser = argparse.ArgumentParser(description="Image Inpainting")
 parser.add_argument("--real_dir", default="data/aotgan/images/test", type=str)
 parser.add_argument("--fake_dir", default="data/outputs", type=str)
-parser.add_argument("--metric", type=str, nargs="+", default="mae psnr ssim")
-parser.add_argument("--image_size", type=int, default=512, help="image size used during training")
+parser.add_argument("--metric", type=str, nargs="+", default="mae psnr ssim fid")
+parser.add_argument("--image_size", type=int, default=128, help="image size used during training")
 args = parser.parse_args()
 
 
@@ -38,7 +38,7 @@ def main(num_worker=8):
             fake_images.append(fimg)
 
     # metrics prepare for image assesments
-    metrics = {met: getattr(module_metric, met) for met in args.metric}
+    metrics = {met: getattr(module_metric, met) for met in args.metric.split()}
     evaluation_scores = {key: 0 for key, val in metrics.items()}
     for key, val in metrics.items():
         evaluation_scores[key] = val(real_images, fake_images, num_worker=num_worker)

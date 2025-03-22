@@ -11,7 +11,7 @@ from torch.nn.parallel import DistributedDataParallel as DDP
 from torch.utils.tensorboard import SummaryWriter
 from torchvision.utils import make_grid
 from tqdm import tqdm
-
+from torchsummary import summary
 from .common import timer
 
 
@@ -32,6 +32,7 @@ class Trainer:
         os.makedirs(self.args.save_dir, exist_ok=True)
 
         self.netG = net.InpaintGenerator(args).cuda()
+        summary(self.netG, [(3, args.image_size, args.image_size),(1, args.image_size, args.image_size)])
         self.optimG = torch.optim.Adam(self.netG.parameters(), lr=args.lrg, betas=(args.beta1, args.beta2))
 
         self.netD = net.Discriminator().cuda()

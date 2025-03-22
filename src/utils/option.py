@@ -8,7 +8,7 @@ parser.add_argument("--dir_image", type=str, default="data/aotgan/images", help=
 parser.add_argument("--dir_mask", type=str, default="data/aotgan/masks", help="mask dataset directory")
 parser.add_argument("--data_train", type=str, default="train", help="dataname used for training")
 parser.add_argument("--data_test", type=str, default="test", help="dataname used for testing")
-parser.add_argument("--image_size", type=int, default=512, help="image size used during training")
+parser.add_argument("--image_size", type=int, default=128, help="image size used during training")
 parser.add_argument("--mask_type", type=str, default="pconv", help="mask used during training")
 
 # model specifications
@@ -35,7 +35,7 @@ parser.add_argument("--rec_loss", type=str, default="1*L1+250*Style+0.1*Perceptu
 parser.add_argument("--adv_weight", type=float, default=0.01, help="loss weight for adversarial loss")
 
 # training specifications
-parser.add_argument("--iterations", type=int, default=1e4, help="the number of iterations for training")
+parser.add_argument("--iterations", type=int, default=160000, help="the number of iterations for training")
 parser.add_argument("--batch_size", type=int, default=4, help="batch size in each mini-batch")
 parser.add_argument("--port", type=int, default=22334, help="tcp port for distributed training")
 parser.add_argument("--resume", action="store_true", help="resume from previous iteration")
@@ -43,7 +43,7 @@ parser.add_argument("--resume", action="store_true", help="resume from previous 
 
 # log specifications
 parser.add_argument("--print_every", type=int, default=10, help="frequency for updating progress bar")
-parser.add_argument("--save_every", type=int, default=1000, help="frequency for saving models")
+parser.add_argument("--save_every", type=int, default=40000, help="frequency for saving models")
 parser.add_argument("--save_dir", type=str, default="../models", help="directory for saving models and logs")
 parser.add_argument(
     "--tensorboard", action="store_true", help="default: false, since it will slow training. use it for debugging"

@@ -15,3 +15,4 @@ torchvision
 tqdm
 scipy
 scikit-image
+torchsummary

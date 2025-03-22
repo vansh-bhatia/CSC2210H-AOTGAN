@@ -8,6 +8,7 @@ from PIL import Image
 from torchvision.transforms import ToTensor,Resize
 from utils.option import args
 from tqdm import tqdm
+import time
 
 
 def postprocess(image):
@@ -35,8 +36,10 @@ def main_worker(args, use_gpu=True):
     mask_paths = sorted(glob(os.path.join(args.dir_mask, "*.png")))
     os.makedirs(args.outputs, exist_ok=True)
 
+    total_time = 0
     # iteration through datasets
     for ipath, mpath in tqdm(zip(image_paths, mask_paths)):
+        temp = time.time()
         image = ToTensor()(Image.open(ipath).resize((args.image_size,args.image_size)).convert("RGB"))
         image = (image * 2.0 - 1.0).unsqueeze(0)
         mask = ToTensor()(Image.open(mpath).resize((args.image_size,args.image_size)).convert("L"))
@@ -49,11 +52,14 @@ def main_worker(args, use_gpu=True):
             pred_img = model(image_masked, mask)
 
         comp_imgs = (1 - mask) * image + mask * pred_img
+        total_time += time.time() - temp
         image_name = os.path.basename(ipath).split(".")[0]
         postprocess(image_masked[0]).save(os.path.join(args.outputs, f"{image_name}_masked.png"))
         postprocess(pred_img[0]).save(os.path.join(args.outputs, f"{image_name}_pred.png"))
         postprocess(comp_imgs[0]).save(os.path.join(args.outputs, f"{image_name}_comp.png"))
-        # print(f"saving to {os.path.join(args.outputs, image_name)}")
+        # print(f"saving to {os.path.join(args.outputs, image_name)}")\
+    average_time = total_time/len(image_paths)
+    print(f"Average time for each inference: {average_time:.5f}s" )
 
 
 if __name__ == "__main__":
